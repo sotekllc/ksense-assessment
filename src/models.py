@@ -69,18 +69,18 @@ class Patient:
             bp_parts = self.blood_pressure.split("/")
 
             try: 
-                # if len(bp_parts) == 2:
                 systolic: int = int(bp_parts[0])
                 diastolic: int = int(bp_parts[1])
 
-                if systolic < 120 and diastolic < 80:
-                    bp_score = 0
+                if systolic >= 140 or diastolic >= 90:
+                    bp_score = 3
+                elif (systolic >= 130 and systolic <= 139) or (diastolic >= 80 and diastolic <= 89):
+                    bp_score = 2
                 elif systolic >= 120 and systolic <= 129 and diastolic < 80:
                     bp_score = 1
-                elif systolic >= 130 and systolic <= 139 and diastolic >= 80 and diastolic <= 89:
-                    bp_score = 2
-                elif systolic >= 140 and diastolic >= 90:
-                    bp_score = 3
+                elif systolic < 120 and diastolic < 80:
+                    bp_score = 0
+                    
             except (ValueError, TypeError):
                 bp_score = 0
 
