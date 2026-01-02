@@ -64,11 +64,11 @@ def fetch_all_patients() -> List[Patient]:
             # Expicitly throw exception for error statuses
             response.raise_for_status()
 
-            payload = response.json()
-            patients.extend(payload["data"])
+            payload: Dict = response.json()
+            patients.extend(payload.get("data", []))
 
-            pagination = payload["pagination"]
-            total_pages = pagination['totalPages']
+            pagination: Dict = payload.get("pagination", {})
+            total_pages = pagination.get("totalPages", total_pages)
 
             page_num += 1
 
