@@ -14,6 +14,13 @@ class Patient:
 
     risk_score: Optional[int] = None
 
+    # We construct the object here and use explicit validation/parsing methods
+    #   for fields that may be missing or have invalid values and are
+    #   required for risk score calculation. We essentially decide that all
+    #   such values are either a valid value of some primitive type or None.
+    #   In this way, all invalid and missing values for these fields will be
+    #   represented by a None value, allowing us to easily distinguish 
+    #   valid data.
     def __init__(self, data: Dict) -> None:
         self.patient_id = data.get('patient_id', None)
         self.name = data.get('name', None)
@@ -22,7 +29,7 @@ class Patient:
         self.temperature = self.parse_float(data.get('temperature', None))
 
         self.calculate_risk_score()
-
+    
     def missing_required_fields(self) -> bool:
         return self.patient_id is None or self.age is None or self.blood_pressure is None or self.temperature is None
 
@@ -67,7 +74,7 @@ class Patient:
         except (TypeError, ValueError):
             return None
 
-    def calculate_blood_pressure_score(self) -> int:
+    def calculate_blood_pressure_subscore(self) -> int:
         bp_score: int = 0   # default to 0, missing or invalid values get a 0 score
         if self.blood_pressure is not None:
             bp_parts = self.blood_pressure.split("/")
@@ -90,7 +97,7 @@ class Patient:
 
         return bp_score
     
-    def calculate_temperature_score(self) -> int:
+    def calculate_temperature_subscore(self) -> int:
         temp_score: int = 0 # default to 0, missing or invalid values get a 0 score
 
         if self.temperature is not None:
@@ -103,7 +110,7 @@ class Patient:
         
         return temp_score
     
-    def calculate_age_score(self) -> int:
+    def calculate_age_subscore(self) -> int:
         age_score: int = 0  # default to 0, missing or invalid values get a 0 score
 
         if self.age is not None:
@@ -121,13 +128,13 @@ class Patient:
     #   subscores and is equal to the sum of these scores.
     def calculate_risk_score(self) -> int:
         # Calculate blood_pressure risk score
-        bp_score: int = self.calculate_blood_pressure_score()
+        bp_score: int = self.calculate_blood_pressure_subscore()
 
         # Calculate temperature risk score
-        temp_score: int = self.calculate_temperature_score()
+        temp_score: int = self.calculate_temperature_subscore()
 
         # Calculate age risk score
-        age_score: int = self.calculate_age_score()
+        age_score: int = self.calculate_age_subscore()
 
         self.risk_score = bp_score + temp_score + age_score
         return self.risk_score
