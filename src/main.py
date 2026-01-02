@@ -12,7 +12,7 @@ from .models import Patient
 load_dotenv()  # reads variables from a .env file and sets them in os.environ
 
 # Implement a session with builtin retries for server errors.
-# Default to 5 retries with a backoff for server errors and rate-limit errors.
+# Default to 10 retries with a backoff for server errors and rate-limit errors.
 def create_session_with_retries(
     retries: int = 10,
     backoff_factor: float = 0.5,
@@ -37,7 +37,7 @@ def create_session_with_retries(
     return session
 
 # Fetch all pages of patients' data.
-def fetch_all_patients(): 
+def fetch_all_patients() -> List[Patient]: 
     base_url: str = os.environ.get('API_BASE_URL')
     path: str = os.environ.get('API_PATIENT_PATH')
 
@@ -77,7 +77,7 @@ def fetch_all_patients():
     except requests.HTTPError as e:
         print(f"HTTPError fetching patients: {e}")
 
-
+# Application entrypoint.
 def main() -> None:
     # Fetch all patients
     all_patients: List[Patient] = fetch_all_patients()

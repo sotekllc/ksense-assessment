@@ -1,5 +1,7 @@
 from typing import Dict, Optional
 
+FEVER_THRESHOLD = 99.6
+
 """
 Domain model class representing a Patient.
 """
@@ -25,7 +27,7 @@ class Patient:
         return self.patient_id is None or self.age is None or self.blood_pressure is None or self.temperature is None
 
     def has_fever(self) -> bool:
-        return self.temperature is not None and self.temperature >= 99.6
+        return self.temperature is not None and self.temperature >= FEVER_THRESHOLD
     
     # Parse the value for a valid integer value.
     #   Return None otherwise.
@@ -114,6 +116,9 @@ class Patient:
         
         return age_score
 
+    # Calculates the total risk score for a patient. Risk score
+    #   is comprised of age, temperature and blood pressure
+    #   subscores and is equal to the sum of these scores.
     def calculate_risk_score(self) -> int:
         # Calculate blood_pressure risk score
         bp_score: int = self.calculate_blood_pressure_score()
