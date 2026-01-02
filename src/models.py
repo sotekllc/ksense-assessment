@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 FEVER_THRESHOLD = 99.6
+HIGH_RISK_THRESHOLD = 4
 
 """
 Domain model class representing a Patient.

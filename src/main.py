@@ -7,6 +7,7 @@ from urllib3.util.retry import Retry
 
 from dotenv import load_dotenv
 
+from .models import HIGH_RISK_THRESHOLD
 from .models import Patient
 
 load_dotenv()  # reads variables from a .env file and sets them in os.environ
@@ -90,7 +91,7 @@ def main() -> None:
 
     # Map results to output requirements:
     #   high_risk_patients, fever_patients, data_quality_issues
-    high_risk_patient_ids: List[str] = [p.patient_id for p in all_patients if p.risk_score >= 4]
+    high_risk_patient_ids: List[str] = [p.patient_id for p in all_patients if p.risk_score >= HIGH_RISK_THRESHOLD]
     fever_patient_ids: List[str] = [p.patient_id for p in fever_patients]
     data_quality_issue_ids: List[str] = [p.patient_id for p in data_quality_issue_patients]
 
