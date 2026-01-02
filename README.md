@@ -5,8 +5,8 @@ A demo project for Ksense for an API integration project. Works with a simple AP
 
 ## Dependencies
 
--- [python poetry](https://python-poetry.org/)
--- python v3.10+
+- [python poetry](https://python-poetry.org/)
+- python v3.10+
 
 
 ## Run project
