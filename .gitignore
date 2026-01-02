@@ -1,1 +1,30 @@
+# -------------------------
+# Python bytecode / cache
+# -------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# -------------------------
+# OS / editor junk
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# -------------------------
+# Environment / secrets
+# -------------------------
 .env
+.env.*
+*.pem
+*.key
+
+# -------------------------
+# Local tooling overrides
+# -------------------------
+.poetry/
