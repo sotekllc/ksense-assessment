@@ -2,15 +2,17 @@ import json
 import os
 import requests
 from requests.adapters import HTTPAdapter
-from typing import List, Tuple
+from typing import Dict, List
 from urllib3.util.retry import Retry
 
 from dotenv import load_dotenv
 
+from .models import Patient
+
 load_dotenv()  # reads variables from a .env file and sets them in os.environ
 
 # Implement a session with builtin retries for server errors.
-# Default to 5 retries with a backoff for server errors.
+# Default to 5 retries with a backoff for server errors and rate-limit errors.
 def create_session_with_retries(
     retries: int = 10,
     backoff_factor: float = 0.5,
@@ -63,9 +65,6 @@ def fetch_all_patients():
             response.raise_for_status()
 
             payload = response.json()
-
-            # print(payload)
-
             patients.extend(payload["data"])
 
             pagination = payload["pagination"]
@@ -73,36 +72,38 @@ def fetch_all_patients():
 
             page_num += 1
 
-        return patients
+        return [Patient(data) for data in patients]
     
     except requests.HTTPError as e:
         print(f"HTTPError fetching patients: {e}")
 
 
-def calculate_patient_risk_scores() -> Tuple:
-    pass
-    # return (scores, patients_missing_data)
-
-
 def main() -> None:
     # Fetch all patients
-    all_patients = fetch_all_patients()
-
-    # DEBUG
-    with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(all_patients, f)
+    all_patients: List[Patient] = fetch_all_patients()
 
     # Find all patients with a fever
+    fever_patients: List[Patient] = [p for p in all_patients if p.has_fever()]
 
     # Find all patients missing "required" data
+    data_quality_issue_patients: List[Patient] = [p for p in all_patients if p.missing_required_fields()]
 
     # Calculate risk scores for each patient (if possible)
-    #   Also determine which patients are missing required data
+    for p in all_patients:
+        p.calculate_risk_score()
 
     # Map results to output requirements:
     #   high_risk_patients, fever_patients, data_quality_issues
-    pass
+    high_risk_patient_ids: List[str] = [p.patient_id for p in all_patients if p.risk_score >= 4]
+    fever_patient_ids: List[str] = [p.patient_id for p in fever_patients]
+    data_quality_issue_ids: List[str] = [p.patient_id for p in data_quality_issue_patients]
 
+    output_data: Dict = {
+        "high_risk_patients": high_risk_patient_ids,
+        "fever_patients": fever_patient_ids,
+        "data_quality_issues": data_quality_issue_ids
+    }
+    print(output_data)
 
 if __name__ == "__main__":
     main()
