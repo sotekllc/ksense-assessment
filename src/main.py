@@ -88,10 +88,6 @@ def main() -> None:
     # Find all patients missing "required" data
     data_quality_issue_patients: List[Patient] = [p for p in all_patients if p.missing_required_fields()]
 
-    # Calculate risk scores for each patient (if possible)
-    for p in all_patients:
-        p.calculate_risk_score()
-
     # Map results to output requirements:
     #   high_risk_patients, fever_patients, data_quality_issues
     high_risk_patient_ids: List[str] = [p.patient_id for p in all_patients if p.risk_score >= 4]

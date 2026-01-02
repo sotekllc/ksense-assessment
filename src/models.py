@@ -19,6 +19,8 @@ class Patient:
         self.blood_pressure = self.parse_blood_pressure(data.get('blood_pressure', None))
         self.temperature = self.parse_float(data.get('temperature', None))
 
+        self.calculate_risk_score()
+
     def missing_required_fields(self) -> bool:
         return self.patient_id is None or self.age is None or self.blood_pressure is None or self.temperature is None
 
@@ -80,7 +82,7 @@ class Patient:
                     bp_score = 1
                 elif systolic < 120 and diastolic < 80:
                     bp_score = 0
-                    
+
             except (ValueError, TypeError):
                 bp_score = 0
 
